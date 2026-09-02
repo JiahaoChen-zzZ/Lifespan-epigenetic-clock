@@ -26,15 +26,17 @@ library(compareGroups)
 
 # load --------------------------------------------------------------------
 
-dt_beta_DMP = read_rds('dt_beta_DMP.rds')
+load('DMPs.Rdata')
+# This tibble named “DMPs” contains 5,636 individuals, a “Sample_Name” column, and 3,237 CpG columns.
 load('data.Rdata')
+# This tibble named “data” contains all variables for 5,636 individuals, except for the β values of CpG sites.
 
 
 # data --------------------------------------------------------------------
-dt = dt_beta_DMP %>% 
+dt = DMPs %>% 
   left_join(select(data, Sample_Name, calendar_age), by = 'Sample_Name') %>% 
   relocate(Sample_Name, calendar_age)
-rm(dt_beta_DMP)
+rm(DMPs)
 
 colnames(dt) = str_replace_all(colnames(dt), '-', '_')
 
@@ -46,6 +48,7 @@ dt = dt %>%
 
 # task --------------------------------------------------------------------
 
+task_all = as_task_regr(dt, target = "calendar_age", id = 'clock')
 task = as_task_regr(dt, target = "calendar_age", id = 'clock')
 task
 
@@ -99,7 +102,7 @@ benchmarking_best_lasso$train(task, row_ids = split$train)
 
 # predict
 lasso_pred_train = benchmarking_best_lasso$predict(task, row_ids = split$train)
-lasso_pred_test = benchmarking_best_lasso$predict(task, row_ids = split$test)
+lasso_pred_test = benchmarking_best_lasso$predict(task_all, row_ids = split$test)
 train_lasso = tibble(row_ids = lasso_pred_train$row_ids, 
                      calendar_age = lasso_pred_train$truth,
                      pred_calendar_age = lasso_pred_train$response)
@@ -148,7 +151,7 @@ benchmarking_best_elastic$train(task, row_ids = split$train)
 
 # predict
 elastic_pred_train = benchmarking_best_elastic$predict(task, row_ids = split$train)
-elastic_pred_test = benchmarking_best_elastic$predict(task, row_ids = split$test)
+elastic_pred_test = benchmarking_best_elastic$predict(task_all, row_ids = split$test)
 train_elastic = tibble(row_ids = elastic_pred_train$row_ids, 
                        calendar_age = elastic_pred_train$truth,
                        pred_calendar_age = elastic_pred_train$response)
@@ -197,7 +200,7 @@ benchmarking_best_knn$train(task, row_ids = split$train)
 
 # predict
 knn_pred_train = benchmarking_best_knn$predict(task, row_ids = split$train)
-knn_pred_test = benchmarking_best_knn$predict(task, row_ids = split$test)
+knn_pred_test = benchmarking_best_knn$predict(task_all, row_ids = split$test)
 train_knn = tibble(row_ids = knn_pred_train$row_ids, 
                    calendar_age = knn_pred_train$truth,
                    pred_calendar_age = knn_pred_train$response)
@@ -249,7 +252,7 @@ benchmarking_best_svm$train(task, row_ids = split$train)
 
 # predict
 svm_pred_train = benchmarking_best_svm$predict(task, row_ids = split$train)
-svm_pred_test = benchmarking_best_svm$predict(task, row_ids = split$test)
+svm_pred_test = benchmarking_best_svm$predict(task_all, row_ids = split$test)
 train_svm = tibble(row_ids = svm_pred_train$row_ids, 
                    calendar_age = svm_pred_train$truth,
                    pred_calendar_age = svm_pred_train$response)
@@ -302,7 +305,7 @@ benchmarking_best_random$train(task, row_ids = split$train)
 
 # predict
 random_pred_train = benchmarking_best_random$predict(task, row_ids = split$train)
-random_pred_test = benchmarking_best_random$predict(task, row_ids = split$test)
+random_pred_test = benchmarking_best_random$predict(task_all, row_ids = split$test)
 train_random = tibble(row_ids = random_pred_train$row_ids, 
                       calendar_age = random_pred_train$truth,
                       pred_calendar_age = random_pred_train$response)
@@ -371,7 +374,7 @@ benchmarking_best_lightgbm$train(task, row_ids = split$train)
 
 # predict
 lightgbm_pred_train = benchmarking_best_lightgbm$predict(task, row_ids = split$train)
-lightgbm_pred_test = benchmarking_best_lightgbm$predict(task, row_ids = split$test)
+lightgbm_pred_test = benchmarking_best_lightgbm$predict(task_all, row_ids = split$test)
 train_lightgbm = tibble(row_ids = lightgbm_pred_train$row_ids, 
                         calendar_age = lightgbm_pred_train$truth,
                         pred_calendar_age = lightgbm_pred_train$response)
@@ -596,7 +599,7 @@ fs_best_lightgbm$train(task, row_ids = split$train)
 
 # predict
 lightgbm_pred_train = fs_best_lightgbm$predict(task, row_ids = split$train)
-lightgbm_pred_test = fs_best_lightgbm$predict(task, row_ids = split$test)
+lightgbm_pred_test = fs_best_lightgbm$predict(task_all, row_ids = split$test)
 train_lightgbm = tibble(row_ids = lightgbm_pred_train$row_ids, 
                         calendar_age = lightgbm_pred_train$truth,
                         pred_calendar_age = lightgbm_pred_train$response)
@@ -734,7 +737,7 @@ pred = tibble(row_ids = rr$prediction()$row_ids,
               pred_calendar_age = rr$prediction()$response)
 pred = pred %>% 
   left_join(dtm, by = 'row_ids') %>% 
-  left_join(select(dt_combined_imp, Sample_Name,
+  left_join(select(data, Sample_Name,
                    CD8T, CD4T, NK, Bcell, Mono, Neu), by = 'Sample_Name')
 
 fit = lm(pred_calendar_age ~ calendar_age, data = pred)
