@@ -12,12 +12,13 @@ library(purrr)
 # load --------------------------------------------------------------------
 
 load('data.Rdata')
+# This tibble named “data” contains all variables for 5,636 individuals, except for the β values of CpG sites.
 dt = data
 
 beta = read_rds('DNAm.rds')
+# This matrix named “beta” contains 889,074 rows of CpG sites, one “Sample_Name” column, and 5,636 columns of individuals.
 
-# 
-
+#
 lm_fun_optimized = function(cpg_row, cpg_name, model_data){
   # cpg_row: beta value
   # cpg_name: CpG name
@@ -76,11 +77,12 @@ DMP = out %>%
 beta_DMP = beta[rownames(beta) %in% DMP$CpG, ]
 name = colnames(beta_DMP)
 
-dt_beta_DMP = beta_DMP %>% 
+DMPs = beta_DMP %>% 
   t() %>% 
   as_tibble() %>% 
   mutate(Sample_Name = name) %>% 
   relocate(Sample_Name)
 
 # save --------------------------------------------------------------------
-write_rds(dt_beta_DMP, file = 'dt_beta_DMP.rds')
+write_rds(DMPs, file = 'DMPs.Rdata')
+# This tibble named “DMPs” contains 5,636 individuals, a “Sample_Name” column, and 3,237 CpG columns.
