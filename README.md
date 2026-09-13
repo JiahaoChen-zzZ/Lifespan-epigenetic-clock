@@ -1,4 +1,4 @@
-# R Scripts for DNA Methylation Aging Clock Analyses
+# R Scripts for "Lifespan epigenetic clocks delineate organ-specific aging landscapes and centenarian resilience signatures"
 This repository contains R scripts used to perform the core analyses described in the manuscript. The scripts cover differential methylation analysis, annotation of organ-enriched CpGs, construction of the lifespan and organ-specific DNA methylation clocks, calculation of established epigenetic clocks, and downstream association analyses.
 ## File Descriptions
 | File | Description |
