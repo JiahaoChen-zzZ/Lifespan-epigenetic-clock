@@ -8,7 +8,7 @@ This repository contains R scripts used to perform the core analyses described i
 | `3-CpG annotation.R` | Annotation of CpG sites mapped to organ-enriched genes. |
 | `4-ML_clock.R` | Training and evaluation of the organismal lifespan DNA methylation clock. |
 | `5-ML_clock_organ.R` | Training and evaluation of the eight organ-specific DNA methylation clocks. |
-| `6-Other DNAm clock.R` | Calculation of established epigenetic clocks, including Horvath, Hannum, PhenoAge, and principal component versions. |
+| `6-Other DNAm clock.R` | Calculation of established epigenetic clocks, including Horvath, Hannum, PhenoAge, GrimAge, DunedinPACE, and Systems Age. |
 | `7-DNAmAgeDev.R` | Calculation of DNA methylation age deviation (DNAmAgeDev) using linear regression approach. |
 | `8-Mortality association analyses.R` | Association analyses between DNAmAgeDev and mortality. |
 | `9-Disease association analyses.R` | Association analyses between DNAmAgeDev and incident age-related and organ-specific diseases. |
